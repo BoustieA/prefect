@@ -178,7 +178,6 @@ def get_last_dataset(db_path: str = DATABASE_PATH, table_name: str = "dataset_sa
     return results
 
 
-
 @task(retries=2, retry_delay_seconds=10, name="Train model")
 def train_model():
     logger = get_run_logger()
@@ -248,6 +247,7 @@ def periodic_check():
 
     logger.info(f"Periodic check completed: " + result['status'])
     return result
+
 
 if __name__ == "__main__":
     # Wait for services to be ready

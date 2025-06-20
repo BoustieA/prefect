@@ -58,7 +58,8 @@ def send_discord_embed(message: str, status: str = "Succès") -> None:
     try:
         response = requests.post(DISCORD_WEBHOOK_URL, json=data, timeout=30)
         if response.status_code != 204:
-            logger.error(f"Erreur lors de l'envoi de l'embed : {response.status_code}")
+            logger.error(f"Erreur lors de l'envoi de l'embed : "
+                         f"{response.status_code}")
         else:
             logger.info("Embed envoyé avec succès !")
     except requests.RequestException as e:
