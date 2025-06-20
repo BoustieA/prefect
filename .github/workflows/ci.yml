@@ -7,6 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
 
@@ -14,9 +15,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Run Prefect test flow
+    - name: Create .env file from GitHub secrets
       run: |
-        docker compose up -d
-        sleep 10  # attendre que l'API soit prête
-        docker-compose exec prefect python test_api_from_prefect.py
-        docker-compose down
+        echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+        # ajoute d'autres lignes ici si besoin
+
+    - name: Start services with Docker Compose
+      run: |
+        docker compose --env-file .env up -d
+        sleep 15  # attends un peu que les conteneurs démarrent
+
+    - name: Run tests inside the Prefect container
+      run: |
+        docker compose exec -T prefect python test_api_from_prefect.py
+
+    - name: Shutdown Docker Compose
+      if: always()
+      run: docker compose down
