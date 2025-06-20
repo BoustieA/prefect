@@ -11,7 +11,7 @@ services:
       - "8000:8000"
     environment:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
-      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
     volumes:
       - app_data:/app/data
       - app_models:/app/models
@@ -39,8 +39,8 @@ services:
     restart: unless-stopped
     environment:
       - PREFECT_SERVER_API_HOST=0.0.0.0
-      - PREFECT_API_URL=http://prefect-server:4200/api
-      - PREFECT_UI_API_URL=http://localhost:4200/api
+      - PREFECT_API_URL=${PREFECT_API_URL}
+      - PREFECT_UI_API_URL=${PREFECT_UI_API_URL}
     
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:4200/health', timeout=5)"]
@@ -80,10 +80,10 @@ services:
       mlflow-server:
         condition: service_healthy
     environment:
-      - PREFECT_API_URL=http://prefect-server:4200/api
       - PYTHONIOENCODING=utf-8
-      - API_URL=http://fastapi_app:8000
-      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+      - PREFECT_API_URL=${PREFECT_API_URL}
+      - API_URL=${API_URL}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
     volumes:
       - app_logs:/app/logs
       - app_models:/app/models

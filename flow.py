@@ -24,6 +24,7 @@ from sqlalchemy import create_engine, Column, Integer, Float, select, func
 from sqlalchemy.orm import declarative_base, sessionmaker
 from prometheus_client import start_http_server, Counter
 import threading
+from dotenv import load_dotenv
 
 from utils.utilities import send_discord_embed
 
@@ -59,13 +60,17 @@ logging.getLogger().addHandler(file_handler)
 
 # Set environment variables
 
+load_dotenv()  # charge les variables du fichier .env dans os.environ
+
+PREFECT_API_URL = os.getenv("PREFECT_API_URL", "http://prefect-server:4200/api")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow-server:5000")
 
 # Set environment variables for Prefect
 # PYTHONIOENCODING: évite les UnicodeDecodeError sous Windows
 # PREFECT_API_URL: indique au SDK où se trouve l'API Prefect
 os.environ.setdefault("PYTHONIOENCODING", "utf-8")
-os.environ.setdefault("PREFECT_API_URL", "http://prefect-server:4200/api")
-os.environ["MLFLOW_TRACKING_URI"] = "http://mlflow-server:5000"
+os.environ.setdefault("PREFECT_API_URL", PREFECT_API_URL)
+os.environ.setdefault("MLFLOW_TRACKING_URI",MLFLOW_TRACKING_URI)
 
 DATABASE_PATH = "data/ia_continu_solution.db"
 PATH_MODEL="/app/models/"

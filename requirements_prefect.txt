@@ -8,3 +8,4 @@ mlflow==2.8.1
 scikit-learn
 sqlalchemy
 prometheus_client
+python-dotenv
