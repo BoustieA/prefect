@@ -1,7 +1,7 @@
 import requests
 import os
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime
 import logging
 # Configure logging
 logs_dir = Path("logs")
