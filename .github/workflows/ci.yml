@@ -18,9 +18,11 @@ jobs:
     - name: Create .env file from GitHub secrets
       run: |
         echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> .env
-        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-        # ajoute d'autres lignes ici si besoin
-
+        echo "PREFECT_API_URL=${{ secrets.PREFECT_API_URL }}" >> .env
+        echo "PREFECT_UI_API_URL=${{ secrets.PREFECT_UI_API_URL }}" >> .env
+        echo "API_URL=${{ secrets.API_URL }}" >> .env
+        echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> .env
+        
     - name: Start services with Docker Compose
       run: |
         docker compose --env-file .env up -d
