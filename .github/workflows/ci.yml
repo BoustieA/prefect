@@ -16,7 +16,7 @@ jobs:
 
     - name: Run Prefect test flow
       run: |
-        docker-compose up -d
+        docker compose up -d
         sleep 10  # attendre que l'API soit prête
         docker-compose exec prefect python test_api_from_prefect.py
         docker-compose down
