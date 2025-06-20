@@ -22,11 +22,11 @@ logger = logging.getLogger(__name__)
 def send_discord_embed(message: str, status: str = "Succès") -> None:
     """Send a notification to Discord via Webhook when API status changes."""
     DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
-    
+
     if not DISCORD_WEBHOOK_URL:
         logger.warning("Discord webhook URL not configured")
         return
-    
+
     # Color mapping for different statuses
     color_map = {
         "Succès": 5814783,  # Green
@@ -34,7 +34,7 @@ def send_discord_embed(message: str, status: str = "Succès") -> None:
         "Avertissement": 16776960,  # Yellow
         "Info": 3447003  # Blue
     }
-    
+
     data = {
         "embeds": [{
             "title": "Résultats du pipeline",
@@ -54,7 +54,7 @@ def send_discord_embed(message: str, status: str = "Succès") -> None:
             }
         }]
     }
-    
+
     try:
         response = requests.post(DISCORD_WEBHOOK_URL, json=data, timeout=30)
         if response.status_code != 204:
