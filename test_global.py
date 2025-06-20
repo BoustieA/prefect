@@ -7,7 +7,6 @@ Single comprehensive test file to validate all functionality
 import requests
 import time
 import os
-import json
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -88,9 +87,7 @@ def test_api_predict():
         assert "confidence" in data, "Response should contain 'confidence'"
         assert 0 <= data["confidence"] <= 1, "Confidence should be between 0 and 1"
 
-        print(
-            f"   ✅ Predict returns {data['prediction']} with confidence {data['confidence']:.3f}"
-        )
+        print(f"   ✅ Predict returns {data['prediction']} with confidence {data['confidence']:.3f}")
         return True
     except Exception as e:
         print(f"   ❌ Predict test failed: {e}")
@@ -108,34 +105,24 @@ def test_api_generate():
         data = response.json()
         assert "generation_id" in data, "Response should contain 'generation_id'"
         assert "samples_created" in data, "Response should contain 'samples_created'"
-        assert (
-            data["samples_created"] == 150
-        ), f"Expected 150 samples, got {data['samples_created']}"
+        assert data["samples_created"] == 150, f"Expected 150 samples, got {data['samples_created']}"
 
         generation_id = data["generation_id"]
 
         # Test database by checking datasets list
         time.sleep(1)  # Wait for database write
         datasets_response = requests.get(f"{API_BASE_URL}/datasets/list", timeout=10)
-        assert (
-            datasets_response.status_code == 200
-        ), "Datasets list should be accessible"
+        assert datasets_response.status_code == 200, "Datasets list should be accessible"
 
         datasets_data = datasets_response.json()
         assert "datasets" in datasets_data, "Response should contain 'datasets'"
-        assert (
-            "total_datasets" in datasets_data
-        ), "Response should contain 'total_datasets'"
+        assert "total_datasets" in datasets_data, "Response should contain 'total_datasets'"
 
         # Check if our generated dataset is in the list
-        found_dataset = any(
-            d["generation_id"] == generation_id for d in datasets_data["datasets"]
-        )
+        found_dataset = any(d["generation_id"] == generation_id for d in datasets_data["datasets"])
         assert found_dataset, "Generated dataset should be found in database"
 
-        print(
-            f"   ✅ Generated dataset {generation_id} with 150 samples and stored in database"
-        )
+        print(f"   ✅ Generated dataset {generation_id} with 150 samples and stored in database")
         return True
     except Exception as e:
         print(f"   ❌ Generate/Database test failed: {e}")
@@ -147,9 +134,7 @@ def test_api_retrain():
     print("🔄 Testing API Retrain with MLflow...")
     try:
         # First ensure we have data
-        gen_response = requests.post(
-            f"{API_BASE_URL}/generate", json={"samples": 200}, timeout=15
-        )
+        gen_response = requests.post(f"{API_BASE_URL}/generate", json={"samples": 200}, timeout=15)
         assert gen_response.status_code == 200, "Should generate data first"
 
         time.sleep(2)  # Wait for database write
@@ -168,9 +153,7 @@ def test_api_retrain():
         assert 0 <= data["accuracy"] <= 1, "Accuracy should be between 0 and 1"
         assert data["training_samples"] > 0, "Should have training samples"
 
-        print(
-            f"   ✅ Retrain successful: {data['model_version']}, accuracy: {data['accuracy']:.3f}"
-        )
+        print(f"   ✅ Retrain successful: {data['model_version']}, accuracy: {data['accuracy']:.3f}")
         return True
     except Exception as e:
         print(f"   ❌ Retrain test failed: {e}")
@@ -235,9 +218,7 @@ def test_discord_integration():
         return False
 
     # Test success notification
-    success = send_discord_embed(
-        "Test global du système IA Continu - Tous les tests passés!", "Succès"
-    )
+    success = send_discord_embed("Test global du système IA Continu - Tous les tests passés!", "Succès")
 
     if success:
         print("   ✅ Discord webhook working")
@@ -253,19 +234,19 @@ def test_complete_workflow():
     try:
         # Step 1: Generate dataset
         print("   1. Generating dataset...")
-        gen_response = requests.post(
-            f"{API_BASE_URL}/generate", json={"samples": 300}, timeout=20
-        )
+        gen_response = requests.post(f"{API_BASE_URL}/generate", json={"samples": 300}, timeout=20)
         assert gen_response.status_code == 200, "Dataset generation should succeed"
         gen_data = gen_response.json()
 
         # Step 2: Make prediction
         print("   2. Making prediction...")
         pred_response = requests.post(
-            f"{API_BASE_URL}/predict", json={"features": [0.7, -0.4]}, timeout=10
+            f"{API_BASE_URL}/predict",
+            json={"features": [0.7, -0.4]},
+            timeout=10,
         )
         assert pred_response.status_code == 200, "Prediction should succeed"
-        pred_data = pred_response.json()
+        pred_response.json()
 
         # Step 3: Retrain model
         print("   3. Retraining model...")
@@ -278,7 +259,9 @@ def test_complete_workflow():
         print("   4. Testing new model...")
         time.sleep(1)  # Wait for model to be updated in memory
         pred2_response = requests.post(
-            f"{API_BASE_URL}/predict", json={"features": [0.7, -0.4]}, timeout=10
+            f"{API_BASE_URL}/predict",
+            json={"features": [0.7, -0.4]},
+            timeout=10,
         )
         assert pred2_response.status_code == 200, "New prediction should succeed"
         pred2_data = pred2_response.json()
@@ -297,9 +280,7 @@ def test_complete_workflow():
                 model_info = model_info_response.json()
                 print(f"   📊 Current model info: {model_info['model_version']}")
                 if model_info["model_version"] == retrain_data["model_version"]:
-                    print(
-                        "   ✅ Model was updated correctly (timing issue in prediction)"
-                    )
+                    print("   ✅ Model was updated correctly (timing issue in prediction)")
                 else:
                     raise AssertionError(
                         f"Model version not updated: expected {retrain_data['model_version']}, got {model_info['model_version']}"
@@ -307,9 +288,7 @@ def test_complete_workflow():
             else:
                 raise AssertionError("Could not verify model info")
         else:
-            print(
-                f"   ✅ Model version updated correctly: {pred2_data['model_version']}"
-            )
+            print(f"   ✅ Model version updated correctly: {pred2_data['model_version']}")
 
         print(
             f"   ✅ Complete workflow: Generated {gen_data['samples_created']} samples, "
@@ -349,7 +328,7 @@ def main():
     total = len(tests)
 
     for test_name, test_func in tests:
-        print(f"\n{'='*20}")
+        print(f"\n{'=' * 20}")
         try:
             result = test_func()
             results[test_name] = result
@@ -360,7 +339,7 @@ def main():
             results[test_name] = False
 
     # Final summary
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print("🎯 GLOBAL TEST RESULTS")
     print("=" * 50)
 
@@ -390,7 +369,7 @@ def main():
                 "Échec",
             )
 
-    print(f"\n🌐 Service URLs:")
+    print("\n🌐 Service URLs:")
     print(f"   • API: {API_BASE_URL}")
     print(f"   • API Docs: {API_BASE_URL}/docs")
     print(f"   • Prefect: {PREFECT_URL}")

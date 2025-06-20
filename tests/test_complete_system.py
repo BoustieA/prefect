@@ -11,14 +11,14 @@ import os
 import sys
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from database.db_manager import DatabaseManager
 from monitoring.discord_notifier import DiscordNotifier
+
+# Load environment variables
+load_dotenv()
 
 # Test configuration
 API_BASE_URL = "http://localhost:9000"
