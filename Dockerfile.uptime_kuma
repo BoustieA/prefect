@@ -1,0 +1,6 @@
+FROM louislam/uptime-kuma:latest
+
+COPY entrypoint_uptime_kuma.sh /entrypoint_uptime_kuma.sh
+RUN chmod +x /entrypoint_uptime_kuma.sh
+
+CMD ["/entrypoint_uptime_kuma.sh"]

@@ -1,0 +1,27 @@
+# FastAPI and web framework
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+requests>=2.31.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+sqlalchemy
+
+# HTTP requests and monitoring
+requests>=2.31.0
+
+# Workflow orchestration
+prefect>=3.1.0
+
+# Machine Learning
+numpy<2
+pandas>=2.0.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# Testing
+pytest>=7.4.0
+
+# Utilities
+python-dateutil>=2.8.0
+python-dotenv>=1.0.0
+prometheus-fastapi-instrumentator

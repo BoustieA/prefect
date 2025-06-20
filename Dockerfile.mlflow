@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+
+RUN pip install --no-cache-dir mlflow==2.8.1 requests
+
+EXPOSE 5000
+
+CMD ["mlflow", "server", \
+     "--backend-store-uri", "sqlite:///tmp/mlflow/mlflow.db", \
+     "--default-artifact-root", "/tmp/mlruns", \
+     "--host", "0.0.0.0", \
+     "--port", "5000"]
