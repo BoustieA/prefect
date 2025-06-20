@@ -28,7 +28,7 @@ jobs:
 
     - name: Run tests inside the Prefect container
       run: |
-        docker compose exec -T prefect python test_api_from_prefect.py
+        docker compose exec -T prefect python tests/test_api_from_prefect.py
 
     - name: Shutdown Docker Compose
       if: always()
